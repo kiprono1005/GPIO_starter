@@ -38,6 +38,7 @@ int main(void)
     // to create an output, all you need is to write a 1 to PxDIR for the specific bit you want
     // A common mistake is to write P1DIR = LED1_MASK instead of P1DIR |= LED1_MASK;
 
+    *P1DIR_address |= LED1_MASK;
 
     // Initializing S1 (switch 1 or button 1)
     // According to the table on page 678 of MSP432 User guide,
@@ -45,13 +46,26 @@ int main(void)
 
     // write a 0 to PxDIR for the specific bit you want
 
+    *P1DIR_address &= ~S1_MASK;
+
     // write a 1 to PxREn for the specific bit you want (to enable a pull resistor)
 
+    *P1REN_address |= S1_MASK;
+
     // write a 1 to PxOUT for the specific bit you want (to make the resistor a pull-up)
+
+    *P1OUT_address |= S1_MASK;
+
 
 
     while (1) {
         // If the button is not pressed, keep the LED off
+        if((*P1DIR_address&S1_MASK)==PRESSED) {
+            *P1OUT_address |= LED1_MASK;
+        }
+        else {
+            *P1OUT_address &= ~LED1_MASK;
+        }
 
              // write a 0 to the output register to turn off the LED
 
